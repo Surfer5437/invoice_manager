@@ -7,7 +7,7 @@ CREATE TABLE users(
 );
 
 CREATE TABLE companies(
-  id integer PRIMARY KEY,
+  id serial PRIMARY KEY,
   name text NOT NULL,
   address text NOT NULL,
   contact_name text,
@@ -32,7 +32,7 @@ CREATE TABLE invoices(
   -- date is stored yyyy-mm-dd
   amount float,
   service_type text NOT NULL,
-  file_url integer NOT NULL,
+  file_url text NOT NULL,
   company_id integer NOT NULL,
   job_po_number integer NOT NULL
 );
