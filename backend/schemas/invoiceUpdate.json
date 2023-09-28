@@ -3,22 +3,30 @@
   "$id": "http://our.company.com/jobUpdate.schema.json",
   "type": "object",
   "properties": {
-    "title": {
+    "date": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "amount": {
       "type": "string",
       "minLength": 1,
       "maxLength": 30
     },
-    "salary": {
-      "type": "integer",
+    "service_type": {
+      "type": "string",
       "minimum": 0
     },
-    "equity": {
+    "file_url": {
+      "type": "string"
+    },
+    "job_po_number": {
       "type": "string",
-      "pattern": "0|(0?\\.[0-9]+)"
+      "minLength": 1,
+      "maxLength": 50
     }
   },
   "additionalProperties": false,
   "required": [
-    "title"
   ]
 }

@@ -34,7 +34,7 @@ CREATE TABLE invoices(
   service_type text NOT NULL,
   file_url text NOT NULL,
   company_id integer NOT NULL,
-  job_po_number integer NOT NULL
+  job_po_number text NOT NULL
 );
 
 CREATE TABLE company_payments(

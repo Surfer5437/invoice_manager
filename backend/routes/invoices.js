@@ -51,19 +51,9 @@ router.post("/",  async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
-  const q = req.query;
-  // arrive as strings from querystring, but we want as int/bool
-  if (q.minSalary !== undefined) q.minSalary = +q.minSalary;
-  q.hasEquity = q.hasEquity === "true";
-
+  
   try {
-    const validator = jsonschema.validate(q, invoiceSearchSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map(e => e.stack);
-      throw new BadRequestError(errs);
-    }
-
-    const invoice = await Invoice.findAll(q);
+    const invoice = await Invoice.findAll();
     return res.json({ invoice });
   } catch (err) {
     return next(err);
@@ -97,7 +87,7 @@ router.get("/:id", async function (req, res, next) {
  * Authorization required: admin
  */
 
-router.patch("/:id", ensureAdmin, async function (req, res, next) {
+router.patch("/:id", async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, invoiceUpdateSchema);
     if (!validator.valid) {
@@ -105,7 +95,7 @@ router.patch("/:id", ensureAdmin, async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const invoice = await Job.update(req.params.id, req.body);
+    const invoice = await Invoice.update(req.params.id, req.body);
     return res.json({ invoice });
   } catch (err) {
     return next(err);

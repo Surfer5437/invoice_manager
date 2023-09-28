@@ -3,7 +3,8 @@
 const db = require("../db");
 const { NotFoundError} = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
-
+const { algorithm, key, iv } = require("../config");
+const crypto = require('crypto');
 
 /** Related functions for companies. */
 
@@ -40,8 +41,18 @@ class Invoice {
           data.job_po_number
         ]);
     let job = result.rows[0];
-
-    return job;
+    const dataToEncrypt = JSON.stringify(job);
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
+    encryptedData += cipher.final('hex');
+    
+    // Step 3: Store and manage the key securely
+    
+// Step 4: Decrypt data
+const decipher = crypto.createDecipheriv(algorithm, key, iv);
+let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
+decryptedData += decipher.final('utf8');
+return JSON.parse(decryptedData)
   }
 
   /** Find all jobs (optional filter on searchFilters).
@@ -54,44 +65,31 @@ class Invoice {
    * Returns [{ id, title, salary, equity, companyHandle, companyName }, ...]
    * */
 
-  static async findAll({ minSalary, hasEquity, title } = {}) {
-    let query = `SELECT j.id,
-                        j.title,
-                        j.salary,
-                        j.equity,
-                        j.company_handle AS "companyHandle",
-                        c.name AS "companyName"
-                 FROM jobs j 
-                   LEFT JOIN companies AS c ON c.handle = j.company_handle`;
-    let whereExpressions = [];
-    let queryValues = [];
+  static async findAll() {
+    let query = await db.query(
+      `SELECT i.id,
+      i.date,
+      i.amount,
+      i.service_type,
+      i.file_url,
+      i.job_po_number,
+      c.name AS "companyName"
+        FROM invoices i 
+        LEFT JOIN companies AS c ON c.id = i.company_id`);
+    let allInvoices = query.rows;
+    const dataToEncrypt = JSON.stringify(allInvoices);
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
+    encryptedData += cipher.final('hex');
+    
+    // Step 3: Store and manage the key securely
+    
+// Step 4: Decrypt data
+const decipher = crypto.createDecipheriv(algorithm, key, iv);
+let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
+decryptedData += decipher.final('utf8');
+return JSON.parse(decryptedData)
 
-    // For each possible search term, add to whereExpressions and
-    // queryValues so we can generate the right SQL
-
-    if (minSalary !== undefined) {
-      queryValues.push(minSalary);
-      whereExpressions.push(`salary >= $${queryValues.length}`);
-    }
-
-    if (hasEquity === true) {
-      whereExpressions.push(`equity > 0`);
-    }
-
-    if (title !== undefined) {
-      queryValues.push(`%${title}%`);
-      whereExpressions.push(`title ILIKE $${queryValues.length}`);
-    }
-
-    if (whereExpressions.length > 0) {
-      query += " WHERE " + whereExpressions.join(" AND ");
-    }
-
-    // Finalize query and return results
-
-    query += " ORDER BY title";
-    const jobsRes = await db.query(query, queryValues);
-    return jobsRes.rows;
   }
 
   /** Given a job id, return data about job.
@@ -103,32 +101,44 @@ class Invoice {
    **/
 
   static async get(id) {
-    const jobRes = await db.query(
-          `SELECT id,
-                  title,
-                  salary,
-                  equity,
-                  company_handle AS "companyHandle"
-           FROM jobs
+    const invoiceRes = await db.query(
+          `SELECT id as "invoiceNumber",
+                  date,
+                  amount,
+                  service_type,
+                  file_url,
+                  company_id
+           FROM invoices
            WHERE id = $1`, [id]);
 
-    const job = jobRes.rows[0];
+    const invoice = invoiceRes.rows[0];
 
-    if (!job) throw new NotFoundError(`No job: ${id}`);
+    if (!invoice) throw new NotFoundError(`No invoice: ${id}`);
 
     const companiesRes = await db.query(
-          `SELECT handle,
+          `SELECT id,
                   name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
+                  address,
+                  contact_name,
+                  phone_number
            FROM companies
-           WHERE handle = $1`, [job.companyHandle]);
+           WHERE id = $1`, [invoice.company_id]);
 
-    delete job.companyHandle;
-    job.company = companiesRes.rows[0];
+    delete invoice.company_id;
+    invoice.company = companiesRes.rows[0];
+    const dataToEncrypt = JSON.stringify(invoice);
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
+    encryptedData += cipher.final('hex');
+    
+    // Step 3: Store and manage the key securely
+    
+// Step 4: Decrypt data
+const decipher = crypto.createDecipheriv(algorithm, key, iv);
+let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
+decryptedData += decipher.final('utf8');
+return JSON.parse(decryptedData)
 
-    return job;
   }
 
   /** Update job data with `data`.
@@ -145,24 +155,34 @@ class Invoice {
 
   static async update(id, data) {
     const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {});
+        data);
     const idVarIdx = "$" + (values.length + 1);
 
-    const querySql = `UPDATE jobs 
+    const querySql = `UPDATE invoices 
                       SET ${setCols} 
                       WHERE id = ${idVarIdx} 
-                      RETURNING id, 
-                                title, 
-                                salary, 
-                                equity,
-                                company_handle AS "companyHandle"`;
+                      RETURNING id as "invoiceNumber", 
+                                date, 
+                                amount, 
+                                service_type,
+                                file_url,
+                                job_po_number`;
     const result = await db.query(querySql, [...values, id]);
-    const job = result.rows[0];
+    const invoice = result.rows[0];
 
-    if (!job) throw new NotFoundError(`No job: ${id}`);
-
-    return job;
+    if (!invoice) throw new NotFoundError(`No invoice: ${id}`);
+    const dataToEncrypt = JSON.stringify(invoice);
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
+    encryptedData += cipher.final('hex');
+    
+    // Step 3: Store and manage the key securely
+    
+// Step 4: Decrypt data
+const decipher = crypto.createDecipheriv(algorithm, key, iv);
+let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
+decryptedData += decipher.final('utf8');
+return JSON.parse(decryptedData)
   }
 
   /** Delete given job from database; returns undefined.
@@ -173,12 +193,12 @@ class Invoice {
   static async remove(id) {
     const result = await db.query(
           `DELETE
-           FROM jobs
+           FROM invoices
            WHERE id = $1
            RETURNING id`, [id]);
-    const job = result.rows[0];
+    const invoice = result.rows[0];
 
-    if (!job) throw new NotFoundError(`No job: ${id}`);
+    if (!invoice) throw new NotFoundError(`No invoice: ${id}`);
   }
 }
 
