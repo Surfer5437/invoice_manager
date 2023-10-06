@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = require("../config");
+const {  ACCESS_TOKEN_SECRET, REFRESH_ACCESS_TOKEN } = require("../config");
 
 /** return signed JWT from user data. */
 
-function createToken(user) {
+function createAccessToken(user) {
   console.assert(user.isAdmin !== undefined,
       "createToken passed user without isAdmin property");
 
@@ -12,7 +12,19 @@ function createToken(user) {
     isAdmin: user.isAdmin || false,
   };
 
-  return jwt.sign(payload, SECRET_KEY);
+  return jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: '1h'});
 }
 
-module.exports = { createToken };
+function createRefreshToken(user){
+  console.assert(user.isAdmin !== undefined,
+    "createToken passed user without isAdmin property");
+
+let payload = {
+  username: user.username,
+  isAdmin: user.isAdmin || false,
+};
+
+return jwt.sign(payload, REFRESH_ACCESS_TOKEN, { expiresIn: '1d'});
+}
+
+module.exports = { createAccessToken, createRefreshToken };

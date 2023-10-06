@@ -26,8 +26,7 @@ class User {
     const result = await db.query(
           `SELECT username,
                   password,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
+                  company_id,
                   email,
                   is_admin AS "isAdmin"
            FROM users
@@ -57,7 +56,7 @@ class User {
    **/
 
   static async register(
-      { username, password, firstName, lastName, email, isAdmin }) {
+      { username, password, email, company_id, is_Admin }) {
     const duplicateCheck = await db.query(
           `SELECT username
            FROM users
@@ -75,19 +74,17 @@ class User {
           `INSERT INTO users
            (username,
             password,
-            first_name,
-            last_name,
             email,
+            company_id,
             is_admin)
-           VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin"`,
+           VALUES ($1, $2, $3, $4, $5)
+           RETURNING username, email, company_id, is_admin`,
         [
           username,
           hashedPassword,
-          firstName,
-          lastName,
           email,
-          isAdmin,
+          company_id,
+          is_Admin
         ],
     );
 
@@ -104,10 +101,9 @@ class User {
   static async findAll() {
     const result = await db.query(
           `SELECT username,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
+                  company_id,
                   email,
-                  is_admin AS "isAdmin"
+                  is_admin
            FROM users
            ORDER BY username`,
     );

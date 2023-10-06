@@ -7,7 +7,7 @@ const jsonschema = require("jsonschema");
 const User = require("../models/user");
 const express = require("express");
 const router = new express.Router();
-const { createToken } = require("../helpers/tokens");
+const { createAccessToken, createRefreshToken } = require("../helpers/tokens");
 const userAuthSchema = require("../schemas/userAuth.json");
 const userRegisterSchema = require("../schemas/userRegister.json");
 const { BadRequestError } = require("../expressError");
@@ -29,8 +29,11 @@ router.post("/token", async function (req, res, next) {
 
     const { username, password } = req.body;
     const user = await User.authenticate(username, password);
-    const token = createToken(user);
-    return res.json({ token });
+    const accessToken = createAccessToken(user);
+    // const refreshToken = createRefreshToken(user);
+    res.cookie('Authentication', accessToken, { httpOnly: true, expires: new Date(Date.now() + 3600000) }); // 1 hour expiration
+    res.json({ accessToken });
+    
   } catch (err) {
     return next(err);
   }

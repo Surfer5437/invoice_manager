@@ -3,7 +3,7 @@
 /** Convenience middleware to handle common auth cases in routes. */
 
 const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = require("../config");
+const { ACCESS_TOKEN_SECRET } = require("../config");
 const { UnauthorizedError } = require("../expressError");
 
 /** Middleware: Authenticate user.
@@ -13,13 +13,29 @@ const { UnauthorizedError } = require("../expressError");
  *
  * It's not an error if no token was provided or if the token is not valid.
  */
+// const verifyJwt = (req, res, next) {
+//   const authHeader = req.headers['authorization'];
+//   if (!authHeader) return res.sendStatus(401);
+//   console.log(authHeader);
+//   jwt.verify(
+//     token,
+//     ACCESS_TOKEN_SECRET,
+//     (err, decoded) => {
+//       if (err) return res.sendStatus(403); //invalid token
+//       req.user = decoded.username;
+//       next();
+//     }
+//   )
+// }
 
 function authenticateJWT(req, res, next) {
   try {
-    const authHeader = req.headers && req.headers.authorization;
+    const authHeader = document.cookie('Authentication');
+    console.log(authHeader);
     if (authHeader) {
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
-      res.locals.user = jwt.verify(token, SECRET_KEY);
+      console.log(token);
+      res.locals.user = jwt.verify(token, ACCESS_TOKEN_SECRET);
     }
     return next();
   } catch (err) {

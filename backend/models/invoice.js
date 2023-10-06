@@ -141,7 +141,7 @@ return JSON.parse(decryptedData)
 
   }
 
-  /** Update job data with `data`.
+  /** Update invoice data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain
    * all the fields; this only changes provided ones.
