@@ -1,0 +1,23 @@
+.Navbar {
+    background: rgb(105,105,105);
+    background: linear-gradient(90deg, rgba(105,105,105,1) 0%, rgba(255,255,255,1) 20%, rgba(255,255,255,1) 50%, rgba(255,255,255,1) 80%, rgba(105,105,105,1) 100%);
+    padding: 1rem;
+}
+
+.Navbar a {
+    font-size:1.5rem;
+    margin: 1rem;
+    color: rgba(27, 27, 27, 0.7);
+    text-decoration:none;
+    border-radius: 10px;
+}
+
+.Navbar a.active {
+    color: black;
+    font-weight: bolder;
+}
+
+.nav_list li{
+    height: 100%;
+    display: inline-block;
+}
