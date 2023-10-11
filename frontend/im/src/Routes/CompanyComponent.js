@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+
 import "./CompanyComponent.css"
 
 function CompanyComponent ({id,name,address,contact_name,phone_number}) {
