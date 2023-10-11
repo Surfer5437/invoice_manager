@@ -32,7 +32,7 @@ useEffect(function companiesLoad() {
             name={company.name}
             address={company.address}
             contact_name={company.contact_name}
-            phone_number={company.phone_number} />)) : <p className='display-4'>Loading..........</p>}
+            phone_number={company.phone_number} />)) : <tr><td><div className='display-4'>Loading..........</div></td></tr>}
             </tbody>
             </table>
             </div>
