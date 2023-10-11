@@ -12,10 +12,10 @@ useEffect(function companiesLoad() {
 },[])
     return(
 
-        <div class="container">
-            <h2>Companies</h2>
-            <div class=".center-block">
-            <table class="table">
+        <div className="container">
+            <p className='display-4'>Companies</p>
+            <div className=".center-block">
+            <table className="table">
             <thead>
       <tr>
         <th>name</th>
@@ -32,7 +32,7 @@ useEffect(function companiesLoad() {
             name={company.name}
             address={company.address}
             contact_name={company.contact_name}
-            phone_number={company.phone_number} />)) : <h2>Loading..........</h2>}
+            phone_number={company.phone_number} />)) : <p className='display-4'>Loading..........</p>}
             </tbody>
             </table>
             </div>
