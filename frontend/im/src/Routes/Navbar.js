@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import './Navbar.css'
 const Navbar = () => {
   return (
@@ -29,7 +29,7 @@ const Navbar = () => {
                   <a className="nav-link" href="/users">Users</a>
                 </li>
               </ul>
-              <span class="navbar-text text-danger">
+              <span className="navbar-text text-danger">
       Current Username goes here
     </span>
             </div>

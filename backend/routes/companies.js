@@ -25,7 +25,7 @@ const router = new express.Router();
  *
  * Authorization required: admin
  */
-// ensureAdmin,
+// 
 router.post("/",  async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyNewSchema);
@@ -52,7 +52,7 @@ router.post("/",  async function (req, res, next) {
  * Authorization required: none
  */
 
-router.get("/",  async function (req, res, next) {
+router.get("/", async function (req, res, next) {
   try {
     const companies = await Company.findAll();
     return res.json({ companies });

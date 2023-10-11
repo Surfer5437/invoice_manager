@@ -11,6 +11,8 @@ const { createAccessToken, createRefreshToken } = require("../helpers/tokens");
 const userAuthSchema = require("../schemas/userAuth.json");
 const userRegisterSchema = require("../schemas/userRegister.json");
 const { BadRequestError } = require("../expressError");
+const crypto = require('crypto');
+const { algorithm, key, iv } = require("../config");
 
 /** POST /auth/token:  { username, password } => { token }
  *
@@ -18,7 +20,6 @@ const { BadRequestError } = require("../expressError");
  *
  * Authorization required: none
  */
-
 router.post("/token", async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, userAuthSchema);
@@ -29,11 +30,21 @@ router.post("/token", async function (req, res, next) {
 
     const { username, password } = req.body;
     const user = await User.authenticate(username, password);
-    const accessToken = createAccessToken(user);
-    // const refreshToken = createRefreshToken(user);
-    res.cookie('Authentication', accessToken, { httpOnly: true, expires: new Date(Date.now() + 3600000) }); // 1 hour expiration
-    res.json({ accessToken });
     
+    const accessToken = createAccessToken(user);
+    console.log(user)
+    const dataToEncrypt = JSON.stringify(user);
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
+    encryptedData += cipher.final('hex');
+    const decipher = crypto.createDecipheriv(algorithm, key, iv);
+let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
+decryptedData += decipher.final('utf8');
+
+  res.cookie('jwt', accessToken, { httpOnly: true, secure: true, maxAge:86400000 });
+  // res.send(accessToken);
+  // req.cookies.jwt = accessToken;
+  res.send(JSON.parse(decryptedData));
   } catch (err) {
     return next(err);
   }

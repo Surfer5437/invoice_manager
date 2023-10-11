@@ -13,22 +13,44 @@ const companiesRoutes = require("./routes/companies");
 const usersRoutes = require("./routes/users");
 const invoicesRoutes = require("./routes/invoices");
 const logoRoutes = require("./routes/logos");
-
+const jwt = require('jsonwebtoken')
 const morgan = require("morgan");
+const { ACCESS_TOKEN_SECRET } = require("./config");
+const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
 
 const app = express();
-
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true, // Allow credentials (cookies)
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan("tiny"));
-app.use(authenticateJWT);
+app.use(cookieParser());
+
+function authenticate(req, res, next) {
+
+  
+  const token = req.cookies.jwt; // Retrieve JWT token from the cookie
+  console.log(token)
+  if (!token) {
+    return res.status(401).send('Unauthorized');
+  }
+
+  jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).send('Unauthorized');
+    }
+    next();
+  });
+}
 
 app.use("/auth", authRoutes);
-app.use("/companies", companiesRoutes);
+app.use("/companies", authenticate, companiesRoutes);
 app.use("/users", usersRoutes);
 app.use("/invoices", invoicesRoutes);
 app.use("/logos", express.static('logos'));
-
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {

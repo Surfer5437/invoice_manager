@@ -26,7 +26,7 @@ class ImApi {
         : {};
 
     try {
-      return (await axios({ url, method, data, params, headers })).data;
+      return (await axios({ url, method, data, params, headers, withCredentials:true })).data;
     } catch (err) {
       console.error("API Error:", err.response);
       let message = err.response.data.error.message;
