@@ -29,25 +29,10 @@ app.use(express.json());
 app.use(morgan("tiny"));
 app.use(cookieParser());
 
-function authenticate(req, res, next) {
 
-  
-  const token = req.cookies.jwt; // Retrieve JWT token from the cookie
-  console.log(token)
-  if (!token) {
-    return res.status(401).send('Unauthorized');
-  }
-
-  jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).send('Unauthorized');
-    }
-    next();
-  });
-}
 
 app.use("/auth", authRoutes);
-app.use("/companies", authenticate, companiesRoutes);
+app.use("/companies", companiesRoutes);
 app.use("/users", usersRoutes);
 app.use("/invoices", invoicesRoutes);
 app.use("/logos", express.static('logos'));

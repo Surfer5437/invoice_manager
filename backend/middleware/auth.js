@@ -13,35 +13,20 @@ const { UnauthorizedError } = require("../expressError");
  *
  * It's not an error if no token was provided or if the token is not valid.
  */
-// const verifyJwt = (req, res, next) {
-//   const authHeader = req.headers['authorization'];
-//   if (!authHeader) return res.sendStatus(401);
-//   console.log(authHeader);
-//   jwt.verify(
-//     token,
-//     ACCESS_TOKEN_SECRET,
-//     (err, decoded) => {
-//       if (err) return res.sendStatus(403); //invalid token
-//       req.user = decoded.username;
-//       next();
-//     }
-//   )
-// }
 
 function authenticateJWT(req, res, next) {
-  try {
-    const authHeader = document.cookie('Authentication');
-    console.log(authHeader);
-    if (authHeader) {
-      const token = authHeader.replace(/^[Bb]earer /, "").trim();
-      console.log(token);
-      res.locals.user = jwt.verify(token, ACCESS_TOKEN_SECRET);
+  const token = req.cookies.jwt; // Retrieve JWT token from the cookie
+    console.log(token)
+    if (!token) {
+      return res.status(401).send('Unauthorized');
     }
-    return next();
-  } catch (err) {
-    return next();
+    jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(401).send('Unauthorized');
+      }
+      next();
+    });
   }
-}
 
 /** Middleware to use when they must be logged in.
  *
@@ -57,21 +42,25 @@ function ensureLoggedIn(req, res, next) {
   }
 }
 
-
 /** Middleware to use when they be logged in as an admin user.
  *
  *  If not, raises Unauthorized.
  */
 
 function ensureAdmin(req, res, next) {
-  try {
-    if (!res.locals.user || !res.locals.user.isAdmin) {
-      throw new UnauthorizedError();
+  const token = req.cookies.jwt; // Retrieve JWT token from the cookie
+    console.log(token)
+    if (!token) {
+      return res.status(401).send('Unauthorized');
     }
-    return next();
-  } catch (err) {
-    return next(err);
-  }
+  
+    jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(401).send('Unauthorized');
+      } else if(decoded.isAdmin){
+        next();
+      }
+    });
 }
 
 /** Middleware to use when they must provide a valid token & be user matching

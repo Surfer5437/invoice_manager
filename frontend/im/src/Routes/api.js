@@ -46,8 +46,13 @@ class ImApi {
 
 
    static async getCompanies() {
-    let res = await this.request(`companies/`);
+    try{
+      let res = await this.request(`companies/`);
     return (res);
+    } catch (err){
+      return null;
+    }
+    
 
   }
 
@@ -64,6 +69,11 @@ class ImApi {
   
   static async loginUser(info) {
     let res = await this.request(`auth/token/`, info, 'post' );
+    return (res);
+  }
+
+  static async logoutUser() {
+    let res = await this.request(`auth/logout/`);
     return (res);
   }
 

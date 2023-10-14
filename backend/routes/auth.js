@@ -7,7 +7,7 @@ const jsonschema = require("jsonschema");
 const User = require("../models/user");
 const express = require("express");
 const router = new express.Router();
-const { createAccessToken, createRefreshToken } = require("../helpers/tokens");
+const { createAccessToken } = require("../helpers/tokens");
 const userAuthSchema = require("../schemas/userAuth.json");
 const userRegisterSchema = require("../schemas/userRegister.json");
 const { BadRequestError } = require("../expressError");
@@ -32,23 +32,20 @@ router.post("/token", async function (req, res, next) {
     const user = await User.authenticate(username, password);
     
     const accessToken = createAccessToken(user);
-    console.log(user)
-    const dataToEncrypt = JSON.stringify(user);
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
-    encryptedData += cipher.final('hex');
-    const decipher = crypto.createDecipheriv(algorithm, key, iv);
-let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
-decryptedData += decipher.final('utf8');
+    
 
   res.cookie('jwt', accessToken, { httpOnly: true, secure: true, maxAge:86400000 });
-  // res.send(accessToken);
-  // req.cookies.jwt = accessToken;
-  res.send(JSON.parse(decryptedData));
+  res.send(user);
   } catch (err) {
     return next(err);
   }
 });
+
+router.get("/logout", async function(req,res){
+  res.clearCookie('jwt');
+  res.send('logged out');
+});
+
 
 /** POST /auth/register:   { user } => { token }
  *
@@ -73,6 +70,5 @@ router.post("/register", async function (req, res, next) {
     return next(err);
   }
 });
-
 
 module.exports = router;

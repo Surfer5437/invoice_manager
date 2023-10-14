@@ -6,12 +6,14 @@ import CompanyComponent from './CompanyComponent.js';
 
 
 useEffect(function companiesLoad() {
+    
     ImApi.getCompanies().then((result)=>{
         setCompanies(result.companies)
     }) 
+
 },[])
     return(
-
+        
         <div className="container">
             <p className='display-4'>Companies</p>
             <div className=".center-block">
@@ -25,6 +27,7 @@ useEffect(function companiesLoad() {
       </tr>
     </thead>
     <tbody>
+        
             {companies? companies.map((company) => (
             <CompanyComponent 
             key={company.id}
@@ -33,7 +36,7 @@ useEffect(function companiesLoad() {
             address={company.address}
             contact_name={company.contact_name}
             phone_number={company.phone_number} />)) : <tr><td><div className='display-4'>Loading..........</div></td></tr>}
-            </tbody>
+    </tbody>
             </table>
             </div>
         </div>

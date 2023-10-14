@@ -1,9 +1,9 @@
 function  Welcome () {
     
     return(
-        <div className="container">
+        <div className="container border rounded p-4 my-3">
             <h1>Welcome {localStorage.getItem('username')}</h1>
-            <h2>Thank you for using Jobly!</h2>
+            <h2>Logged in! </h2>
         </div>
     )
 }

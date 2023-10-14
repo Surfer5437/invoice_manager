@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ImApi from "./api";
+import { NavLink } from "react-router-dom";
 
 
 
@@ -21,60 +22,41 @@ function  Login () {
         e.preventDefault();
         try {
             await ImApi.loginUser(formData).then((result)=>{
-                
-                const jwtCookie = document.cookie.split('; ').find(cookie => cookie.startsWith('jwt='));
-                alert(jwtCookie)
-if (jwtCookie) {
-  // Extract the JWT token value from the cookie
-  const jwtToken = jwtCookie.split('=')[1];
-  console.log('JWT Token:', jwtToken);
-localStorage.setItem('jwtToken', jwtToken);
-  // Now you can use the JWT token as needed in your client-side code
-} else {
-  console.log('JWT Cookie not found');
-}
+                localStorage.setItem('username', result.username);
+                localStorage.setItem('isAdmin', result.isAdmin);
+                localStorage.setItem('company_id', result.company_id);
+                localStorage.setItem('email', result.email);
+            });
+            window.location.reload();
+        } catch (err){
 
-
-// Retrieve the JWT token from localStorage
-const storedToken = localStorage.getItem('jwtToken');
-
-// Use the stored token as needed
-console.log('Stored JWT Token:', storedToken);
-                console.log(result)
-                localStorage.setItem('token', storedToken)
-                localStorage.setItem('username', formData.username)
-            }) 
-        } catch (error) {
-            alert(error[0])
-        }
-            
-            if (localStorage.getItem('username')){
-                setFormData(initialState);
-                window.location.reload(false);
             }
     }
 
     return (
-        <div className="container">
-            <h1>Login</h1>
+        <div className="container border rounded p-4 my-3">
+            <h1 className="my-3">Login</h1>
             <form onSubmit={handleSubmit}>
-                <label htmlFor="username">Username:</label>
                 <input
+                className="form-control my-3"
                 id="username"
                 type="text"
                 name="username"
                 placeholder="username"
                 value={formData.username}
                 onChange={handleChange} />
-                <label htmlFor="password">Password:</label>
                 <input
+                className="form-control my-3"
                 id="password"
                 type="password"
                 name="password"
                 placeholder="password"
                 value={formData.password}
                 onChange={handleChange} />
-                <button>Submit</button>
+                <button className="btn btn-primary btn-block my-3">Submit</button>
+                <NavLink to='/register'>
+                <button className=" btn btn-primary btn-block my-3">register</button>
+            </NavLink>
             </form>
         </div>
     )

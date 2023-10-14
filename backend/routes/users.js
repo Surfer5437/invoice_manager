@@ -14,7 +14,6 @@ const userUpdateSchema = require("../schemas/userUpdate.json");
 
 const router = express.Router();
 
-
 /** POST / { user }  => { user, token }
  *
  * Adds a new user. This is not the registration endpoint --- instead, this is
@@ -34,7 +33,6 @@ router.post("/", async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-
     const user = await User.register(req.body);
     const token = createToken(user);
     return res.status(201).json({ user, token });

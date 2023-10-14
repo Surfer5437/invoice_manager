@@ -22,16 +22,24 @@ const Navbar = () => {
                 <li className="nav-item">
                   <a className="nav-link" href="/">Home</a>
                 </li>
+                
+                {localStorage.getItem('username')?
+                <>
                 <li className="nav-item">
                   <a className="nav-link" href="/companies">Companies</a>
                 </li>
                 <li className="nav-item">
                   <a className="nav-link" href="/users">Users</a>
                 </li>
+                </>
+                :null}
+
               </ul>
+              {localStorage.getItem('username')!=='null'?
               <span className="navbar-text text-danger">
-      Current Username goes here
-    </span>
+                {localStorage.getItem('username')}
+              </span>:''}
+              
             </div>
           </div>
         </nav>

@@ -52,7 +52,7 @@ router.post("/",  async function (req, res, next) {
  * Authorization required: none
  */
 
-router.get("/", async function (req, res, next) {
+router.get("/", ensureAdmin, async function (req, res, next) {
   try {
     const companies = await Company.findAll();
     return res.json({ companies });
