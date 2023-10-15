@@ -74,25 +74,16 @@ function ensureCorrectUserOrAdmin(req, res, next) {
     if (!token) {
       return res.status(401).send('Unauthorized');
     }
-  
+  console.log(req.params.company_id)
     jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
+      console.log(decoded)
       if (err) {
         return res.status(401).send('Unauthorized');
       } else if(decoded.is_admin || decoded.company_id === req.params.company_id){
         next();
       }
     });
-
-
-
-    const user = res.locals.user;
-    if (!(user && (user.isAdmin || user.username === req.params.username))) {
-      throw new UnauthorizedError();
-    }
-    return next();
-  } catch (err) {
-    return next(err);
-  }
+}
 }
 
 

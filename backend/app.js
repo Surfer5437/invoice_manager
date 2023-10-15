@@ -12,12 +12,8 @@ const authRoutes = require("./routes/auth");
 const companiesRoutes = require("./routes/companies");
 const usersRoutes = require("./routes/users");
 const invoicesRoutes = require("./routes/invoices");
-const logoRoutes = require("./routes/logos");
-const jwt = require('jsonwebtoken')
 const morgan = require("morgan");
-const { ACCESS_TOKEN_SECRET } = require("./config");
 const cookieParser = require("cookie-parser");
-const cookieSession = require("cookie-session");
 
 const app = express();
 const corsOptions = {
@@ -28,8 +24,6 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(cookieParser());
-
-
 
 app.use("/auth", authRoutes);
 app.use("/companies", companiesRoutes);

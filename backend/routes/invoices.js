@@ -6,7 +6,7 @@ const jsonschema = require("jsonschema");
 
 const express = require("express");
 const { BadRequestError } = require("../expressError");
-const { ensureAdmin } = require("../middleware/auth");
+const { ensureAdmin, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const Invoice = require("../models/invoice");
 const invoiceNewSchema = require("../schemas/invoiceNew.json");
 const invoiceUpdateSchema = require("../schemas/invoiceUpdate.json");
@@ -85,7 +85,7 @@ router.get("/:id", async function (req, res, next) {
  * Authorization required: none
  */
 
-router.get("/company/:company_id", async function (req, res, next) {
+router.get("/company/:company_id", ensureCorrectUserOrAdmin, async function (req, res, next) {
   try {
     
     const allInvoices = await Invoice.findAllInvoicesPerCompany(req.params.company_id);

@@ -27,7 +27,6 @@ class User {
           `SELECT username,
                   password,
                   company_id,
-                  email,
                   is_admin
            FROM users
            WHERE username = $1`,
