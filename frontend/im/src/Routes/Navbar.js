@@ -23,7 +23,7 @@ const Navbar = () => {
                   <a className="nav-link" href="/">Home</a>
                 </li>
                 
-                {localStorage.getItem('username')?
+                {localStorage.getItem('is_admin') === 'true'?
                 <>
                 <li className="nav-item">
                   <a className="nav-link" href="/companies">Companies</a>
@@ -32,7 +32,10 @@ const Navbar = () => {
                   <a className="nav-link" href="/users">Users</a>
                 </li>
                 </>
-                :null}
+                :<>
+                <li className="nav-item">
+                  <a className="nav-link" href="/companyinvoices">Invoices</a>
+                </li></>}
 
               </ul>
               {localStorage.getItem('username')!=='null'?

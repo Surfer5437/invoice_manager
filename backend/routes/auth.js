@@ -58,12 +58,13 @@ router.get("/logout", async function(req,res){
 
 router.post("/register", async function (req, res, next) {
   try {
+    
     const validator = jsonschema.validate(req.body, userRegisterSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    const newUser = await User.register({ ...req.body, isAdmin: false });
+    const newUser = await User.register({ ...req.body, is_admin: false });
     const accessToken = createAccessToken(newUser);
     res.cookie('jwt', accessToken, { httpOnly: true, secure: true, maxAge:86400000 });
   res.send(newUser);

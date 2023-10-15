@@ -7,9 +7,9 @@ const express = require("express");
 
 const path = require('path');
 const { BadRequestError } = require("../expressError");
-const { ensureAdmin } = require("../middleware/auth");
+const { ensureAdmin, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const Company = require("../models/company");
-
+const Invoice = require("../models/invoice");
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
 const companySearchSchema = require("../schemas/companySearch.json");
@@ -76,6 +76,11 @@ router.get("/:id",ensureAdmin, async function (req, res, next) {
     return next(err);
   }
 });
+
+
+
+
+
 
 /** PATCH /[handle] { fld1, fld2, ... } => { company }
  *

@@ -9,11 +9,11 @@ const crypto = require('crypto');
 /** Related functions for companies. */
 
 class Invoice {
-  /** Create a job (from data), update db, return new job data.
+  /** Create an invoice (from data), update db, return new invoice data.
    *
-   * data should be { title, salary, equity, companyHandle }
+   * data should be { date, amount, service_type, file_url, company_id, job_po_number }
    *
-   * Returns { id, title, salary, equity, companyHandle }
+   * Returns { id, date, amount, service_type, file_url, company_id, job_po_number }
    **/
 
   static async create(data) {
@@ -41,28 +41,13 @@ class Invoice {
           data.job_po_number
         ]);
     let job = result.rows[0];
-    const dataToEncrypt = JSON.stringify(job);
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
-    encryptedData += cipher.final('hex');
-    
-    // Step 3: Store and manage the key securely
-    
-// Step 4: Decrypt data
-const decipher = crypto.createDecipheriv(algorithm, key, iv);
-let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
-decryptedData += decipher.final('utf8');
-return JSON.parse(decryptedData)
-  }
+    console.log(job)
+    return job
+}
 
-  /** Find all jobs (optional filter on searchFilters).
+  /** Find all invoices ().
    *
-   * searchFilters (all optional):
-   * - minSalary
-   * - hasEquity (true returns only jobs with equity > 0, other values ignored)
-   * - title (will find case-insensitive, partial matches)
-   *
-   * Returns [{ id, title, salary, equity, companyHandle, companyName }, ...]
+   * Returns [{ id, date, amount, service_type, file_url, job_po_number, companyName }, ...]
    * */
 
   static async findAll() {
@@ -77,20 +62,32 @@ return JSON.parse(decryptedData)
         FROM invoices i 
         LEFT JOIN companies AS c ON c.id = i.company_id`);
     let allInvoices = query.rows;
-    const dataToEncrypt = JSON.stringify(allInvoices);
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
-    encryptedData += cipher.final('hex');
-    
-    // Step 3: Store and manage the key securely
-    
-// Step 4: Decrypt data
-const decipher = crypto.createDecipheriv(algorithm, key, iv);
-let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
-decryptedData += decipher.final('utf8');
-return JSON.parse(decryptedData)
-
+return JSON.parse(allInvoices)
   }
+
+    /** Find all invoices per company (company_id).
+   *
+   * Returns [{ id, date, amount, service_type, file_url, job_po_number, companyName }, ...]
+   * */
+
+    static async findAllInvoicesPerCompany(company_id) {
+      let query = await db.query(
+        `SELECT i.id,
+        i.date,
+        i.amount,
+        i.service_type,
+        i.file_url,
+        i.job_po_number,
+        c.name AS "companyName"
+          FROM invoices i 
+          LEFT JOIN companies AS c ON c.id = i.company_id
+          WHERE c.id = $1`,
+          [company_id]);
+      let allInvoices = query.rows;
+      if (!allInvoices) return {"invoice":"No invoices yet"};
+      console.log(allInvoices)
+  return allInvoices;
+    }
 
   /** Given a job id, return data about job.
    *
@@ -126,18 +123,8 @@ return JSON.parse(decryptedData)
 
     delete invoice.company_id;
     invoice.company = companiesRes.rows[0];
-    const dataToEncrypt = JSON.stringify(invoice);
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
-    encryptedData += cipher.final('hex');
-    
-    // Step 3: Store and manage the key securely
-    
-// Step 4: Decrypt data
-const decipher = crypto.createDecipheriv(algorithm, key, iv);
-let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
-decryptedData += decipher.final('utf8');
-return JSON.parse(decryptedData)
+
+return JSON.parse(invoice)
 
   }
 
@@ -171,18 +158,8 @@ return JSON.parse(decryptedData)
     const invoice = result.rows[0];
 
     if (!invoice) throw new NotFoundError(`No invoice: ${id}`);
-    const dataToEncrypt = JSON.stringify(invoice);
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
-    encryptedData += cipher.final('hex');
-    
-    // Step 3: Store and manage the key securely
-    
-// Step 4: Decrypt data
-const decipher = crypto.createDecipheriv(algorithm, key, iv);
-let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
-decryptedData += decipher.final('utf8');
-return JSON.parse(decryptedData)
+
+return JSON.parse(invoice)
   }
 
   /** Delete given job from database; returns undefined.

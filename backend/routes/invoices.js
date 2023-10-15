@@ -77,6 +77,24 @@ router.get("/:id", async function (req, res, next) {
   }
 });
 
+/** GET /[handle]  =>  { company }
+ *
+ *  Company is { handle, name, description, numEmployees, logoUrl, jobs }
+ *   where jobs is [{ id, title, salary, equity }, ...]
+ *
+ * Authorization required: none
+ */
+
+router.get("/company/:company_id", async function (req, res, next) {
+  try {
+    
+    const allInvoices = await Invoice.findAllInvoicesPerCompany(req.params.company_id);
+    console.log(allInvoices)
+    return res.json(allInvoices);
+  } catch (err) {
+    return next(err);
+  }
+});
 
 /** PATCH /[jobId]  { fld1, fld2, ... } => { job }
  *

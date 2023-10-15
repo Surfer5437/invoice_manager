@@ -28,7 +28,7 @@ class User {
                   password,
                   company_id,
                   email,
-                  is_admin AS "isAdmin"
+                  is_admin
            FROM users
            WHERE username = $1`,
         [username],
@@ -56,7 +56,7 @@ class User {
    **/
 
   static async register(
-      { username, password, email, company_id, is_Admin }) {
+      { username, password, email, company_id, is_admin }) {
     const duplicateCheck = await db.query(
           `SELECT username
            FROM users
@@ -67,6 +67,28 @@ class User {
     if (duplicateCheck.rows[0]) {
       throw new BadRequestError(`Duplicate username: ${username}`);
     }
+
+    const companyUserExists = await db.query(
+      `SELECT company_id
+       FROM users
+       WHERE company_id = $1`,
+    [company_id],
+);
+
+if (companyUserExists.rows[0]) {
+  throw new BadRequestError(`This company already has a user assigned`);
+}
+
+    const companyCheck = await db.query(
+      `SELECT id
+       FROM companies
+       WHERE id = $1`,
+    [company_id],
+);
+
+if (companyCheck.rows[0]) {
+  throw new BadRequestError(`Company does not exist in system yet.`);
+}
 
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
 
@@ -84,7 +106,7 @@ class User {
           hashedPassword,
           email,
           company_id,
-          is_Admin
+          is_admin
         ],
     );
 
@@ -104,7 +126,7 @@ class User {
               u.username, 
               u.email, 
               u.company_id, 
-              u.is_Admin,
+              u.is_admin,
               c.name AS "company_name"
           FROM 
               users u

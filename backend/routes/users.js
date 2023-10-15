@@ -26,14 +26,16 @@ const router = express.Router();
  * Authorization required: admin
  **/
 
-router.post("/", ensureAdmin, async function (req, res, next) {
+router.post("/", async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, userNewSchema);
+   
+    console.log(JSON.parse(addAdminToBody))
+    const validator = jsonschema.validate(addAdminToBody, userNewSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    const user = await User.register(req.body);
+    const user = await User.register(addAdminToBody);
     const accessToken = createAccessToken(user);
     res.cookie('jwt', accessToken, { httpOnly: true, secure: true, maxAge:86400000 });
     res.send(user);

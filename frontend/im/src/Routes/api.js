@@ -44,10 +44,18 @@ class ImApi {
 
   }
 
-
-   static async getCompanies() {
+  static async getCompanies() {
     try{
       let res = await this.request(`companies/`);
+    return (res);
+    } catch (err){
+      return null;
+    }
+  }
+
+  static async getInvoicesPerCompany(company_id) {
+    try{
+      let res = await this.request(`invoices/company/${company_id}`);
     return (res);
     } catch (err){
       return null;
@@ -66,7 +74,6 @@ class ImApi {
   static async getJobs() {
     let res = await this.request(`jobs/`);
     return (res);
-
   }
 
   static async postUser(info) {

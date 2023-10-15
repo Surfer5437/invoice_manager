@@ -1,4 +1,4 @@
-import ImApi from './api.js'
+import ImApi from '../api.js'
 import React, { useState, useEffect } from 'react';
 import UserComponent from './UserComponent.js';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
         
             
 
-},[])
+},[navigate])
 
     return(
         <div className="container">

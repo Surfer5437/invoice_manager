@@ -23,9 +23,8 @@ function  Login () {
         try {
             await ImApi.loginUser(formData).then((result)=>{
                 localStorage.setItem('username', result.username);
-                localStorage.setItem('isAdmin', result.isAdmin);
+                localStorage.setItem('is_admin', result.is_admin);
                 localStorage.setItem('company_id', result.company_id);
-                localStorage.setItem('email', result.email);
             });
             window.location.reload();
         } catch (err){

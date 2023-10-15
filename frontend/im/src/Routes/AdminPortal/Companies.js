@@ -1,4 +1,4 @@
-import ImApi from './api.js'
+import ImApi from '../api.js'
 import React, { useState, useEffect } from 'react';
 import CompanyComponent from './CompanyComponent.js';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,7 @@ useEffect(function companiesLoad() {
         result===null?navigate('/'):setCompanies(result.companies)
     }) 
 
-},[])
+},[navigate])
     return(
         
         <div className="container">
