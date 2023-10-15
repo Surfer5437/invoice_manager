@@ -40,12 +40,7 @@ class Company {
           tax_id
         ],
     );
-
-    const dataToEncrypt = JSON.stringify(result.rows[0]);
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
-    encryptedData += cipher.final('hex');
-    return encryptedData;
+    return result.rows[0];
   }
 
   /** Find all companies
@@ -62,27 +57,8 @@ class Company {
                         tax_id
                  FROM companies`
     );
-    // Step 2: Encrypt data
-    const dataToEncrypt = JSON.stringify(query.rows);
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
-    encryptedData += cipher.final('hex');
-    
-    // Step 3: Store and manage the key securely
-    
-// Step 4: Decrypt data
-const decipher = crypto.createDecipheriv(algorithm, key, iv);
-let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
-decryptedData += decipher.final('utf8');
-return JSON.parse(decryptedData)
-// console.log('key', key)
-// console.log('iv', iv)
-// console.log('Original Data:', dataToEncrypt);
-// console.log('Encrypted Data:', encryptedData);
-// console.log('Decrypted Data:', decryptedData);
 
-    // const securedCompanyInfo = jwt.sign({companies: query.rows}, SECRET_KEY)
-    //   return encryptedToken;
+return query.rows;
   }
 
   /** Given a company id number, return data about company.
@@ -94,7 +70,6 @@ return JSON.parse(decryptedData)
    **/
 
   static async get(id) {
-    console.log(typeof id)
     const companyRes = await db.query(
           `SELECT name,
                   address,
@@ -118,15 +93,7 @@ return JSON.parse(decryptedData)
     );
 
     company.invoices = invoices.rows;
-
-    const dataToEncrypt = JSON.stringify(company);
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
-    encryptedData += cipher.final('hex');
-    const decipher = crypto.createDecipheriv(algorithm, key, iv);
-let decryptedData = decipher.update(encryptedData, 'hex', 'utf8');
-decryptedData += decipher.final('utf8');
-return JSON.parse(decryptedData)
+return JSON.parse(company);
   }
 
   /** Update company data with `data`.

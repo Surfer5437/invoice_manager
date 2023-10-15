@@ -1,14 +1,15 @@
 import ImApi from './api.js'
 import React, { useState, useEffect } from 'react';
 import CompanyComponent from './CompanyComponent.js';
+import { useNavigate } from 'react-router-dom';
  function  Companies () {
     const[companies,setCompanies] = useState( null);
-
+    const navigate = useNavigate();
 
 useEffect(function companiesLoad() {
     
     ImApi.getCompanies().then((result)=>{
-        setCompanies(result.companies)
+        result===null?navigate('/'):setCompanies(result.companies)
     }) 
 
 },[])

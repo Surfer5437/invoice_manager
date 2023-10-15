@@ -6,6 +6,7 @@ import Companies from './Companies';
 // import Profile from './Profile';
 import NotFound from './NotFound';
 import Navbar from './Navbar';
+import Users from './Users';
 // import Register from './Register';
 
 const Router = () => {
@@ -15,6 +16,7 @@ const Router = () => {
           <Route path="/" element={<Navbar />}>
             <Route index element={<Home />} />
             <Route path="companies" element={<Companies />} />
+            <Route path="users" element={<Users />} />
             {/* <Route path="company/:handle" element={<Company />} />
             <Route path="jobs" element={<Jobs />} />
             <Route path="profile/:user" element={<Profile />} />

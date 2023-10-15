@@ -8,7 +8,7 @@ const express = require("express");
 const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const User = require("../models/user");
-const { createToken } = require("../helpers/tokens");
+const { createAccessToken } = require("../helpers/tokens");
 const userNewSchema = require("../schemas/userNew.json");
 const userUpdateSchema = require("../schemas/userUpdate.json");
 
@@ -26,7 +26,7 @@ const router = express.Router();
  * Authorization required: admin
  **/
 
-router.post("/", async function (req, res, next) {
+router.post("/", ensureAdmin, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, userNewSchema);
     if (!validator.valid) {
@@ -34,22 +34,23 @@ router.post("/", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
     const user = await User.register(req.body);
-    const token = createToken(user);
-    return res.status(201).json({ user, token });
+    const accessToken = createAccessToken(user);
+    res.cookie('jwt', accessToken, { httpOnly: true, secure: true, maxAge:86400000 });
+    res.send(user);
   } catch (err) {
     return next(err);
   }
 });
 
 
-/** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
+/** GET / => { users: [ {username, email, is_admin, company_name }, ... ] }
  *
  * Returns list of all users.
  *
  * Authorization required: admin
  **/
 
-router.get("/", async function (req, res, next) {
+router.get("/", ensureAdmin, async function (req, res, next) {
   try {
     const users = await User.findAll();
     return res.json({ users });
@@ -67,7 +68,7 @@ router.get("/", async function (req, res, next) {
  * Authorization required: admin or same user-as-:username
  **/
 
-router.get("/:username",  async function (req, res, next) {
+router.get("/:username",  ensureAdmin, async function (req, res, next) {
   try {
     const user = await User.get(req.params.username);
     return res.json({ user });

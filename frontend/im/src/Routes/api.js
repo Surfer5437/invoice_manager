@@ -52,8 +52,15 @@ class ImApi {
     } catch (err){
       return null;
     }
-    
+  }
 
+  static async getUsers() {
+    try{
+      let res = await this.request(`users/`);
+    return (res);
+    } catch (err){
+      return null;
+    }
   }
 
   static async getJobs() {

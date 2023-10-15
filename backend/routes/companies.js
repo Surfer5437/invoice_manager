@@ -14,7 +14,6 @@ const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
 const companySearchSchema = require("../schemas/companySearch.json");
 
-const app = express();
 const router = new express.Router();
 
 /** POST / { company } =>  { company }
@@ -25,15 +24,14 @@ const router = new express.Router();
  *
  * Authorization required: admin
  */
-// 
-router.post("/",  async function (req, res, next) {
+
+router.post("/", ensureAdmin,  async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyNewSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-
     const company = await Company.create(req.body);
     return res.status(201).json({ company });
   } catch (err) {
@@ -69,7 +67,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  * Authorization required: none
  */
 
-router.get("/:id", async function (req, res, next) {
+router.get("/:id",ensureAdmin, async function (req, res, next) {
   try {
     
     const company = await Company.get(req.params.id);
@@ -90,7 +88,7 @@ router.get("/:id", async function (req, res, next) {
  * Authorization required: admin ensureAdmin,
  */
 
-router.patch("/:id", async function (req, res, next) {
+router.patch("/:id",ensureAdmin, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyUpdateSchema);
     if (!validator.valid) {
@@ -110,7 +108,7 @@ router.patch("/:id", async function (req, res, next) {
  * Authorization: admin
  */
 
-router.delete("/:id",  async function (req, res, next) {
+router.delete("/:id",ensureAdmin,  async function (req, res, next) {
   try {
     await Company.remove(req.params.id);
     return res.json({ deleted: req.params.id });

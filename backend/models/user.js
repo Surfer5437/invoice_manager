@@ -97,18 +97,24 @@ class User {
    *
    * Returns [{ username, first_name, last_name, email, is_admin }, ...]
    **/
-
   static async findAll() {
-    const result = await db.query(
-          `SELECT username,
-                  company_id,
-                  email,
-                  is_admin
-           FROM users
-           ORDER BY username`,
+   
+    const users = await db.query(
+          `SELECT 
+              u.username, 
+              u.email, 
+              u.company_id, 
+              u.is_Admin,
+              c.name AS "company_name"
+          FROM 
+              users u
+          INNER JOIN 
+              companies c
+          ON 
+              u.company_id = c.id`
     );
-
-    return result.rows;
+    
+return users.rows;
   }
 
   /** Given a username, return data about user.
@@ -153,7 +159,6 @@ class User {
    *   { firstName, lastName, password, email, isAdmin }
    *
    * Returns { username, firstName, lastName, email, isAdmin }
-   *
    * Throws NotFoundError if not found.
    *
    * WARNING: this function can set a new password or make a user an admin.

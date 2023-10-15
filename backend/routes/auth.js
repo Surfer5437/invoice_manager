@@ -12,7 +12,6 @@ const userAuthSchema = require("../schemas/userAuth.json");
 const userRegisterSchema = require("../schemas/userRegister.json");
 const { BadRequestError } = require("../expressError");
 const crypto = require('crypto');
-const { algorithm, key, iv } = require("../config");
 
 /** POST /auth/token:  { username, password } => { token }
  *
@@ -20,6 +19,7 @@ const { algorithm, key, iv } = require("../config");
  *
  * Authorization required: none
  */
+
 router.post("/token", async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, userAuthSchema);
@@ -27,13 +27,9 @@ router.post("/token", async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-
     const { username, password } = req.body;
     const user = await User.authenticate(username, password);
-    
     const accessToken = createAccessToken(user);
-    
-
   res.cookie('jwt', accessToken, { httpOnly: true, secure: true, maxAge:86400000 });
   res.send(user);
   } catch (err) {
@@ -41,11 +37,15 @@ router.post("/token", async function (req, res, next) {
   }
 });
 
+/** POST /auth/logout:   { user } => { clearCookie }
+ *
+ * Authorization required: none
+ */
+
 router.get("/logout", async function(req,res){
   res.clearCookie('jwt');
   res.send('logged out');
 });
-
 
 /** POST /auth/register:   { user } => { token }
  *
@@ -64,8 +64,9 @@ router.post("/register", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
     const newUser = await User.register({ ...req.body, isAdmin: false });
-    const token = createToken(newUser);
-    return res.status(201).json({ token });
+    const accessToken = createAccessToken(newUser);
+    res.cookie('jwt', accessToken, { httpOnly: true, secure: true, maxAge:86400000 });
+  res.send(newUser);
   } catch (err) {
     return next(err);
   }

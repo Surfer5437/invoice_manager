@@ -1,7 +1,7 @@
 CREATE TABLE users(
   username varchar(25) PRIMARY KEY,
   password TEXT NOT NULL,
-  company_id text NOT NULL,
+  company_id integer NOT NULL,
   email text NOT NULL CHECK (position('@' IN email) > 1),
   is_admin boolean NOT NULL DEFAULT FALSE
 );
