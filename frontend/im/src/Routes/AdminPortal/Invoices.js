@@ -1,16 +1,18 @@
 import ImApi from '../api.js'
 import React, { useState, useEffect } from 'react';
 import InvoiceComponent from './InvoiceComponent.js';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
  function  AllInvoices () {
-    const[invoices,setInvoices] = useState( null);
+    const[invoices,setInvoices] = useState(null);
     const navigate = useNavigate();
-
+    
 useEffect(function companiesLoad() {
-
+function logout(){
+        navigate('/loggedOut')
+        }
     ImApi.getAllInvoices().then((result)=>{
         console.log(result)
-        result===null?navigate('/'):setInvoices(result.invoices)
+        result===null?logout():setInvoices(result.invoices)
     })
 
 },[navigate])
@@ -18,6 +20,9 @@ useEffect(function companiesLoad() {
         <div className="container">
             <p className='display-4'>Invoices</p>
             <div className=".center-block">
+            <NavLink to='/AddInvoice'>
+            <button className="btn btn-primary btn-block my-3">Add Invoice</button>
+            </NavLink>
             <table className="table">
             <thead>
       <tr>

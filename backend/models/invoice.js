@@ -40,8 +40,8 @@ class Invoice {
           data.company_id,
           data.job_po_number
         ]);
-    let job = result.rows[0];
-    return job
+    let invoice = result.rows[0];
+    return invoice
 }
 
   /** Find all invoices ().

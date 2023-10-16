@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
 
 /** API Class.
@@ -80,13 +81,13 @@ class ImApi {
     }
   }
 
-  static async getJobs() {
-    let res = await this.request(`jobs/`);
+  static async postUser(info) {
+    let res = await this.request(`auth/register/`, info, 'post' );
     return (res);
   }
 
-  static async postUser(info) {
-    let res = await this.request(`auth/register/`, info, 'post' );
+  static async postInvoiceToCompany(info) {
+    let res = await this.request(`invoices/`, info, 'post' );
     return (res);
   }
   
@@ -97,6 +98,7 @@ class ImApi {
 
   static async logoutUser() {
     let res = await this.request(`auth/logout/`);
+    localStorage.clear()
     return (res);
   }
 
@@ -104,14 +106,6 @@ class ImApi {
     let res = await this.request(`users/${info}`);
     return (res);
   }
-
-  static async applyToJob(user, jobId){
-    // /users/:username/jobs/:id
-    let res = await this.request(`users/${user}/jobs/${jobId}`,{}, 'post');
-    return (res);
-  }
-
-
 
 }
 

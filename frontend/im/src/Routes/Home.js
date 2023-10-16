@@ -1,13 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import Login from "./Login";
 import Welcome from "./Welcome";
-import ImApi from "./api";
 
 function Home() {
-
+  const navigate = useNavigate();
     function logout(){
-        localStorage.clear()
-        ImApi.logoutUser()
-        window.location.reload();
+        navigate('/loggedOut')
         }
 
 return (
@@ -16,7 +14,7 @@ return (
       <div className="col-md-6 custom-container mx-auto">
     {localStorage.getItem('username')?<Welcome />:<><Login /></>}
     {localStorage.getItem('username')?<button className="btn btn-primary btn-block" onClick={logout}>Logout</button>:null}
-    </div>
+        </div>
       </div>
     </div>
 )

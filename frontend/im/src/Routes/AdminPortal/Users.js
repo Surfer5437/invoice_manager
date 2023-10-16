@@ -4,22 +4,16 @@ import UserComponent from './UserComponent.js';
 import { useNavigate } from 'react-router-dom';
  function  Users () {
     const[users,setUsers] = useState( null);
-  
     const navigate = useNavigate();
 
     useEffect(function usersLoad() {
-         
-            
+         function logout(){
+        navigate('/loggedOut')
+        }
         ImApi.getUsers().then((result)=>{
-            result===null?navigate('/'):setUsers(result.users)
+            result===null?logout():setUsers(result.users)
             
-        }) 
-            
-
-                
-        
-            
-
+        })
 },[navigate])
 
     return(

@@ -5,11 +5,13 @@ import { useNavigate } from 'react-router-dom';
  function  InvoicesPerCompany () {
     const[invoices,setInvoices] = useState( null);
     const navigate = useNavigate();
-
+    
 useEffect(function companiesLoad() {
-
+        function logout(){
+        navigate('/loggedOut')
+        }
     ImApi.getInvoicesPerCompany(localStorage.getItem('company_id')).then((result)=>{
-        result===null?navigate('/'):setInvoices(result)
+        result===null?logout():setInvoices(result)
     })
 
 },[navigate])

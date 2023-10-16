@@ -5,11 +5,13 @@ import { useNavigate } from 'react-router-dom';
  function  Companies () {
     const[companies,setCompanies] = useState( null);
     const navigate = useNavigate();
-
+   
 useEffect(function companiesLoad() {
-    
+     function logout(){
+        navigate('/loggedOut')
+        }
     ImApi.getCompanies().then((result)=>{
-        result===null?navigate('/'):setCompanies(result.companies)
+        result===null?logout():setCompanies(result.companies)
     }) 
 
 },[navigate])

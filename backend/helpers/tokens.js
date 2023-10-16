@@ -13,7 +13,7 @@ function createAccessToken(user) {
     company_id:user.company_id
   };
 
-  return jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: '1h'});
+  return jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: '10s'});
 }
 
 function createRefreshToken(user){
