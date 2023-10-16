@@ -10,6 +10,7 @@ function createAccessToken(user) {
   let payload = {
     username: user.username,
     is_admin: user.is_admin || false,
+    company_id:user.company_id
   };
 
   return jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: '1h'});

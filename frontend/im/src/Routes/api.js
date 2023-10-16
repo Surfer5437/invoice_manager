@@ -62,6 +62,15 @@ class ImApi {
     }
   }
 
+  static async getAllInvoices(company_id) {
+    try{
+      let res = await this.request(`invoices/`);
+    return (res);
+    } catch (err){
+      return null;
+    }
+  }
+
   static async getUsers() {
     try{
       let res = await this.request(`users/`);

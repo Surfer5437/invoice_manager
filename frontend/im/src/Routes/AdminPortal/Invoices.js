@@ -2,14 +2,15 @@ import ImApi from '../api.js'
 import React, { useState, useEffect } from 'react';
 import InvoiceComponent from './InvoiceComponent.js';
 import { useNavigate } from 'react-router-dom';
- function  InvoicesPerCompany () {
+ function  AllInvoices () {
     const[invoices,setInvoices] = useState( null);
     const navigate = useNavigate();
 
 useEffect(function companiesLoad() {
 
-    ImApi.getInvoicesPerCompany(localStorage.getItem('company_id')).then((result)=>{
-        result===null?navigate('/'):setInvoices(result)
+    ImApi.getAllInvoices().then((result)=>{
+        console.log(result)
+        result===null?navigate('/'):setInvoices(result.invoices)
     })
 
 },[navigate])
@@ -26,6 +27,7 @@ useEffect(function companiesLoad() {
         <th>service_type</th>
         <th>file_url</th>
         <th>job/po number</th>
+        <th>company name</th>
       </tr>
     </thead>
         <tbody>
@@ -37,11 +39,12 @@ useEffect(function companiesLoad() {
             amount={invoice.amount}
             service_type={invoice.service_type}
             file_url={invoice.file_url}
-            job_po_number={invoice.job_po_number} />)) : <tr><td><div className='display-4'>Loading..........</div></td></tr>}
+            job_po_number={invoice.job_po_number}
+            company_name={invoice.companyName} />)) : <tr><td><div className='display-4'>Loading..........</div></td></tr>}
             </tbody>
             </table>
             </div>
         </div>
     )
 }
-export default InvoicesPerCompany;
+export default AllInvoices;

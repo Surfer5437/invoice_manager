@@ -41,7 +41,6 @@ class Invoice {
           data.job_po_number
         ]);
     let job = result.rows[0];
-    console.log(job)
     return job
 }
 
@@ -62,7 +61,7 @@ class Invoice {
         FROM invoices i 
         LEFT JOIN companies AS c ON c.id = i.company_id`);
     let allInvoices = query.rows;
-return JSON.parse(allInvoices)
+return allInvoices
   }
 
     /** Find all invoices per company (company_id).
@@ -85,7 +84,6 @@ return JSON.parse(allInvoices)
           [company_id]);
       let allInvoices = query.rows;
       if (!allInvoices) return {"invoice":"No invoices yet"};
-      console.log(allInvoices)
   return allInvoices;
     }
 

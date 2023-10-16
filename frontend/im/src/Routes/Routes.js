@@ -9,6 +9,7 @@ import Navbar from './Navbar';
 import Users from './AdminPortal/Users';
 import Register from './CompanyPortal/Register';
 import InvoicesPerCompany from './CompanyPortal/InvoicesPerCompany';
+import AllInvoices from './AdminPortal/Invoices';
 // import Register from './Register';
 
 const Router = () => {
@@ -21,8 +22,8 @@ const Router = () => {
             <Route path="users" element={<Users />} />
              <Route path="register" element={<Register />} />
             <Route path="companyinvoices" element={<InvoicesPerCompany />} />
-            {/*<Route path="profile/:user" element={<Profile />} />
-            <Route path="register" element={<Register />} />*/}
+            <Route path="allinvoices" element={<AllInvoices />} />
+            {/*<Route path="register" element={<Register />} />*/}
             <Route path="*" element={<NotFound />} /> 
           </Route>
         </Routes>

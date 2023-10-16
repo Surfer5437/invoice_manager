@@ -29,7 +29,6 @@ const router = express.Router();
 router.post("/", async function (req, res, next) {
   try {
    
-    console.log(JSON.parse(addAdminToBody))
     const validator = jsonschema.validate(addAdminToBody, userNewSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);

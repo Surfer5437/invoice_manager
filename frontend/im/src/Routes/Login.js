@@ -26,6 +26,7 @@ function  Login () {
                 localStorage.setItem('is_admin', result.is_admin);
                 localStorage.setItem('company_id', result.company_id);
             });
+            console.log()
             window.location.reload();
         } catch (err){
 

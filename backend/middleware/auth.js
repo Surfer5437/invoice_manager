@@ -21,6 +21,7 @@ function authenticateJWT(req, res, next) {
     }
     jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
       if (err) {
+        res.clearCookie('jwt');
         return res.status(401).send('Unauthorized');
       }
       next();
@@ -54,6 +55,7 @@ function ensureAdmin(req, res, next) {
   
     jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
       if (err) {
+        res.clearCookie('jwt');
         return res.status(401).send('Unauthorized');
       } else if(decoded.is_admin){
         next();
@@ -74,15 +76,16 @@ function ensureCorrectUserOrAdmin(req, res, next) {
     if (!token) {
       return res.status(401).send('Unauthorized');
     }
-  console.log(req.params.company_id)
     jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
-      console.log(decoded)
       if (err) {
+        res.clearCookie('jwt');
         return res.status(401).send('Unauthorized');
-      } else if(decoded.is_admin || decoded.company_id === req.params.company_id){
+      } else if(decoded.is_admin || decoded.company_id == req.params.company_id){
         next();
       }
     });
+} catch (err){
+  next(err);
 }
 }
 

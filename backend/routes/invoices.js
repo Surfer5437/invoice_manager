@@ -50,11 +50,11 @@ router.post("/",  async function (req, res, next) {
  * Authorization required: none
  */
 
-router.get("/", async function (req, res, next) {
+router.get("/", ensureAdmin, async function (req, res, next) {
   
   try {
-    const invoice = await Invoice.findAll();
-    return res.json({ invoice });
+    const invoices = await Invoice.findAll();
+    return res.json({ invoices });
   } catch (err) {
     return next(err);
   }
@@ -89,7 +89,6 @@ router.get("/company/:company_id", ensureCorrectUserOrAdmin, async function (req
   try {
     
     const allInvoices = await Invoice.findAllInvoicesPerCompany(req.params.company_id);
-    console.log(allInvoices)
     return res.json(allInvoices);
   } catch (err) {
     return next(err);
