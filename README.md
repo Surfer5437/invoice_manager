@@ -2,14 +2,14 @@
 
 ## Tools used for this project
 ### Front-end
-######React
-######bootstrap
+React
+bootstrap
 
 ### Back-end
-######NodeJS
-######Express
-######PostgreSQL
-######BCrypt
+NodeJS
+Express
+PostgreSQL
+BCrypt
 
 ### Authentication
 Handled with HTTP only cookies and protected routing.
